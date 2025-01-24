@@ -1,0 +1,20 @@
+{
+  "name": "google-sheet-package",
+  "version": "1.0.0",
+  "description": "Una clase para interactuar con Google Sheets usando la API de Google",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "google-sheets",
+    "api",
+    "gapi"
+  ],
+  "author": "Katherin guerrero <kathejudith@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dayjs": "^1.11.0"
+  },
+  "devDependencies": {}
+}
