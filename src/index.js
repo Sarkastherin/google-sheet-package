@@ -53,7 +53,10 @@ class GoogleSheet {
     }
   }
 
-  async postData(data) {
+  async postData(data,user) {
+    if(user) {
+      data.registrado_por = user.alias;
+    }
     data.fecha_creacion = dayjs(new Date(), "YYYY-DD-MM").format("YYYY-MM-DD");
     convertGroupDates(data, "en-es");
     const headers = await this.getHeaders();
@@ -145,8 +148,13 @@ class GoogleSheet {
 
   async getLastId() {
     const data = await this.getData();
-    const Ids = data.map((item) => item.id);
-    return Math.max(...Ids) || 0;
+    if(data.length > 0) {
+      const Ids = data.map((item) => item.id);
+      return Math.max(...Ids) || 0;
+    }
+    else {
+      return 0;
+    }
   }
 
   getNumCol(key, array) {
@@ -169,3 +177,4 @@ class GoogleSheet {
     }
   }
 }
+export default GoogleSheet;
