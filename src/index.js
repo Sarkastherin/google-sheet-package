@@ -34,7 +34,8 @@ class GoogleSheet {
       if (result.error) {
         return result;
       } else {
-        return getDataInJSON(result.values);
+        const data = getDataInJSON(result.values);
+        return data.map((item) => convertGroupDates(item, "es-en"));
       }
     } catch (e) {
       console.log(e);
@@ -53,11 +54,17 @@ class GoogleSheet {
     }
   }
 
-  async postData(data,user) {
-    if(user) {
+  async postData(data, user) {
+    if (user) {
       data.registrado_por = user.alias;
     }
-    data.fecha_creacion = dayjs(new Date(), "YYYY-DD-MM").format("YYYY-MM-DD");
+    const fechaActual = new Date();
+    const fechaFormateada = fechaActual.toLocaleDateString("es-AR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    data.fecha_creacion = fechaFormateada;
     convertGroupDates(data, "en-es");
     const headers = await this.getHeaders();
     if (headers) {
@@ -148,11 +155,10 @@ class GoogleSheet {
 
   async getLastId() {
     const data = await this.getData();
-    if(data.length > 0) {
+    if (data.length > 0) {
       const Ids = data.map((item) => item.id);
       return Math.max(...Ids) || 0;
-    }
-    else {
+    } else {
       return 0;
     }
   }

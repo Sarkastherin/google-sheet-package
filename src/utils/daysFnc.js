@@ -4,6 +4,7 @@ export const convertGroupDates = (obj,type) => {
     for(let item in obj){
       const value = obj[item];
       if(type=='es-en') {
+        
         if(isDateES(value)) {
           obj[item] = convertDate(type,value)
         }
