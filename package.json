@@ -4,6 +4,7 @@
   "description": "Una clase para interactuar con Google Sheets usando la API de Google",
   "main": "src/index.js",
   "types": "src/GoogleSheet.d.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
