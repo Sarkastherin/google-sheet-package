@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { getDataInJSON, getDataInArray } from "./utils/functions.js";
 import { convertGroupDates } from "./utils/daysFnc.js";
 
@@ -10,7 +9,7 @@ class GoogleSheet {
     this.range = `${props.nameSheet}!A${this.rowHead}:ZZZ`;
     this.description = props.description;
   }
-
+  
   async getResponse() {
     try {
       const { result } = await gapi.client.sheets.spreadsheets.values.get({
@@ -21,21 +20,30 @@ class GoogleSheet {
       });
       return result;
     } catch (e) {
-      if (e.result.error.code === 401) {
+      console.log(e, this.nameSheet)
+      if (e.result.error.code === 403) {
         window.location.reload();
       }
       return e.result;
     }
   }
 
-  async getData() {
+  async getData(bringInactive) {
     try {
       const result = await this.getResponse();
       if (result.error) {
         return result;
       } else {
         const data = getDataInJSON(result.values);
-        return data.map((item) => convertGroupDates(item, "es-en"));
+        const dataFormattedDate = data.map((item) => convertGroupDates(item, "es-en"));
+        if(bringInactive) {
+          return dataFormattedDate
+        }
+        else {
+          const activeData = dataFormattedDate.filter(item => item.active === true)
+          return activeData.length > 0 ? activeData : dataFormattedDate
+        }
+        
       }
     } catch (e) {
       console.log(e);
@@ -54,10 +62,14 @@ class GoogleSheet {
     }
   }
 
-  async postData(data, user) {
+  async postData({ data, user, includeId }) {
     if (user) {
       data.registrado_por = user.alias;
     }
+    if (includeId) {
+      data.id = (await this.getLastId()) + 1;
+    }
+    data.active = true;
     const fechaActual = new Date();
     const fechaFormateada = fechaActual.toLocaleDateString("es-AR", {
       day: "2-digit",
@@ -90,7 +102,7 @@ class GoogleSheet {
             `Code: ${result.error.code} | Message: ${result.error.message}`
           );
         }
-        return { result, status };
+        return { result, status, response: data };
       } catch (e) {
         console.log("Problems with postData", e);
       }
@@ -98,7 +110,6 @@ class GoogleSheet {
   }
 
   async updateData({ colName, id, values }) {
-    console.log(values);
     convertGroupDates(values, "en-es");
     let dataUpdate = [];
     try {
@@ -114,6 +125,7 @@ class GoogleSheet {
             value: values[item],
           });
         }
+        console.log(dataUpdate)
         const dataPost = new Array();
         for (let item of dataUpdate) {
           if (item.column > 0) {
@@ -152,7 +164,13 @@ class GoogleSheet {
       console.log(e);
     }
   }
-
+  async disactive({ colName, id }) {
+    try {
+      await this.updateData({ colName, id, values: { active: false } });
+    } catch (e) {
+      console.log(e);
+    }
+  }
   async getLastId() {
     const data = await this.getData();
     if (data.length > 0) {

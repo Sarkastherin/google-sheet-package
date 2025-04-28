@@ -1,8 +1,9 @@
 {
   "name": "google-sheet-package",
-  "version": "1.0.8",
+  "version": "1.0.19",
   "description": "Una clase para interactuar con Google Sheets usando la API de Google",
   "main": "src/index.js",
+  "types": "src/GoogleSheet.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,8 +14,8 @@
   ],
   "author": "Katherin guerrero <kathejudith@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "dayjs": "^1.11.0"
-  },
-  "devDependencies": {}
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sarkastherin/google-sheet-package.git"
+  }
 }
