@@ -1,6 +1,6 @@
 // GoogleSheet.d.ts
 
-declare module 'my-google-sheet' {
+declare module 'google-sheet-package' {
     interface GoogleSheetProps {
       sheetId: string;
       rowHead: number;
