@@ -18,5 +18,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Sarkastherin/google-sheet-package.git"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
   }
 }
