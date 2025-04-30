@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 export const convertGroupDates = (obj,type) => {
     for(let item in obj){
       const value = obj[item];
@@ -28,9 +27,15 @@ export const convertGroupDates = (obj,type) => {
   const convertDate = (type, value) => {
     let newDate
     if(type=='es-en') {
-      dayjs.extend(customParseFormat);
-      const date = dayjs(value,'D/M/YYYY');
-      newDate = dayjs(date).format("YYYY-MM-DD");
+      const [dia, mes, anno] = value.split("/");
+      const myDate = new Date(`${mes}/${dia}/${anno}`);
+      const myDateString = myDate.toLocaleString("es-AR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      const [day, month, year] = myDateString.split("/");
+      newDate = `${year}-${month}-${day}`
     }
     else if(type=='en-es') {
       const date = dayjs(value).format("YYYY-MM-DD");
