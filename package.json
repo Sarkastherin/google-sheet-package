@@ -1,6 +1,6 @@
 {
   "name": "google-sheet-package",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Una clase para interactuar con Google Sheets usando la API de Google",
   "main": "src/index.js",
   "types": "src/GoogleSheet.d.ts",
