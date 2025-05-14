@@ -39,6 +39,11 @@ declare module 'google-sheet-package' {
         id: any;
         values: Record<string, any>;
       }): Promise<any>;
+      update({ colName, id, values }: {
+        colName: string;
+        id: any;
+        values: Record<string, any>;
+      }): Promise<any>;
   
       // Method to deactivate data by setting "active" to false
       disactive({ colName, id }: { colName: string; id: any }): Promise<void>;

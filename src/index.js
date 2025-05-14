@@ -9,7 +9,7 @@ class GoogleSheet {
     this.range = `${props.nameSheet}!A${this.rowHead}:ZZZ`;
     this.description = props.description;
   }
-  
+
   async getResponse() {
     try {
       const { result } = await gapi.client.sheets.spreadsheets.values.get({
@@ -20,7 +20,7 @@ class GoogleSheet {
       });
       return result;
     } catch (e) {
-      console.log(e, this.nameSheet)
+      console.log(e, this.nameSheet);
       if (e.result.error.code === 403) {
         window.location.reload();
       }
@@ -35,15 +35,17 @@ class GoogleSheet {
         return result;
       } else {
         const data = getDataInJSON(result.values);
-        const dataFormattedDate = data.map((item) => convertGroupDates(item, "es-en"));
-        if(bringInactive) {
-          return dataFormattedDate
+        const dataFormattedDate = data.map((item) =>
+          convertGroupDates(item, "es-en")
+        );
+        if (bringInactive) {
+          return dataFormattedDate;
+        } else {
+          const activeData = dataFormattedDate.filter(
+            (item) => item.active === true
+          );
+          return activeData.length > 0 ? activeData : dataFormattedDate;
         }
-        else {
-          const activeData = dataFormattedDate.filter(item => item.active === true)
-          return activeData.length > 0 ? activeData : dataFormattedDate
-        }
-        
       }
     } catch (e) {
       console.log(e);
@@ -125,7 +127,7 @@ class GoogleSheet {
             value: values[item],
           });
         }
-        console.log(dataUpdate)
+        console.log(dataUpdate);
         const dataPost = new Array();
         for (let item of dataUpdate) {
           if (item.column > 0) {
@@ -162,6 +164,57 @@ class GoogleSheet {
       }
     } catch (e) {
       console.log(e);
+    }
+  }
+  async update({ colName, id, values }) {
+    convertGroupDates(values, "en-es");
+    let dataUpdate = [];
+    try {
+      const data = await this.getData();
+      const index = data.findIndex((item) => item[colName] === id);
+      if (index >= 0) {
+        const row = index + this.rowHead + 1;
+        for (let item in values) {
+          dataUpdate.push({
+            row: row,
+            column: this.getNumCol(item, data),
+            value: values[item],
+          });
+        }
+        const dataPost = new Array();
+        for (let item of dataUpdate) {
+          if (item.column > 0) {
+            dataPost.push({
+              majorDimension: "ROWS",
+              range: `${this.nameSheet}!R${item.row}C${item.column}`,
+              values: [[item.value]],
+            });
+          }
+        }
+        try {
+          const {status, error} =
+            await gapi.client.sheets.spreadsheets.values.batchUpdate({
+              spreadsheetId: this.sheetId,
+              resource: {
+                data: dataPost,
+                includeValuesInResponse: false,
+                responseDateTimeRenderOption: "FORMATTED_STRING",
+                responseValueRenderOption: "FORMATTED_VALUE",
+                valueInputOption: "USER_ENTERED",
+              },
+            });
+          if (error) {
+            throw new Error(`Problemas con la solicitud ${error.message}`);
+          }
+          return { status};
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        throw new Error(`El ID ${id} no existe en la hoja ${this.nameSheet}`);
+      }
+    } catch (e) {
+      return { error: e };
     }
   }
   async disactive({ colName, id }) {
