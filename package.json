@@ -1,7 +1,7 @@
 {
   "name": "google-sheet-package",
-  "version": "1.0.26",
-  "description": "Una clase para interactuar con Google Sheets usando la API de Google",
+  "version": "2.0.0",
+  "description": "Una clase optimizada para interactuar con Google Sheets usando la API de Google con respuestas estilo REST API",
   "main": "src/index.js",
   "types": "src/GoogleSheet.d.ts",
   "type": "module",
@@ -11,7 +11,10 @@
   "keywords": [
     "google-sheets",
     "api",
-    "gapi"
+    "gapi",
+    "rest-api",
+    "error-handling",
+    "typescript"
   ],
   "author": "Katherin guerrero <kathejudith@gmail.com>",
   "license": "MIT",
@@ -20,6 +23,6 @@
     "url": "https://github.com/Sarkastherin/google-sheet-package.git"
   },
   "dependencies": {
-    "dayjs": "^1.11.13"
+    "dayjs": "^1.11.18"
   }
 }
