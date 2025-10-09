@@ -14,7 +14,8 @@
     "gapi",
     "rest-api",
     "error-handling",
-    "typescript"
+    "typescript",
+    "v-3.00"
   ],
   "author": "Katherin guerrero <kathejudith@gmail.com>",
   "license": "MIT",
