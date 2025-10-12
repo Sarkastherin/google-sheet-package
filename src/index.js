@@ -434,9 +434,9 @@ class GoogleSheet {
       }
 
       const data = dataResponse.data;
-      const record = data.find((item) => item[key] == value);
-      
-      if (!record) {
+      const record = data.filter((item) => item[key] == value);
+
+      if (record.length === 0) {
         return createErrorResponse(
           `Record not found with ${key} = ${value}`,
           HTTP_STATUS.NOT_FOUND,
