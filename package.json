@@ -1,6 +1,6 @@
 {
   "name": "google-sheet-package",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Una clase optimizada para interactuar con Google Sheets usando la API de Google con respuestas estilo REST API",
   "main": "src/index.js",
   "types": "src/GoogleSheet.d.ts",
