@@ -23,16 +23,16 @@ declare module 'google-sheet-package' {
     sheetId: string;
     rowHead: number;
     nameSheet: string;
-    description?: string;
+    nameFile: string;  // Required: Name of the file for error reporting
   }
 
-  interface PostDataParams {
+  interface InsertParams {
     data: Record<string, any>;
     user?: { alias: string };
     includeId?: boolean;
   }
 
-  interface UpdateDataParams {
+  interface UpdateParams {
     colName: string;
     id: any;
     values: Record<string, any>;
@@ -43,56 +43,50 @@ declare module 'google-sheet-package' {
     id: any;
   }
 
+  interface DeleteParams {
+    colName: string;
+    id: any;
+  }
+
+  interface GetDataParams {
+    columnName?: string;
+    value?: any;
+    operator?: '=' | '==' | '!=' | '>' | '<' | '>=' | '<=' | 'contains' | 'startsWith' | 'endsWith';
+    multiple?: boolean;
+  }
+
   class GoogleSheet {
     sheetId: string;
     rowHead: number;
     nameSheet: string;
     range: string;
-    description?: string;
+    nameFile: string;
 
     constructor(props: GoogleSheetProps);
 
-    // Method to get raw response from Google Sheets API
-    getResponse(): Promise<ApiResponse<any>>;
-
-    // Method to fetch data and return JSON formatted results
-    getData(bringInactive?: boolean): Promise<ApiResponse<any[]>>;
-
-    // Method to get headers of the Google Sheet
-    getHeaders(): Promise<ApiResponse<string[]>>;
+    // Method to fetch data and return JSON formatted results with optional filtering
+    getData(params?: GetDataParams): Promise<ApiResponse<Record<string, any>[] | Record<string, any>>>;
 
     // Method to post new data to the Google Sheet
-    postData(params: PostDataParams): Promise<ApiResponse<{
+    insert(params: InsertParams): Promise<ApiResponse<{
       insertedData: Record<string, any>;
       rowsAdded: number;
       range?: string;
     }>>;
 
     // Method to update existing data in the Google Sheet
-    updateData(params: UpdateDataParams): Promise<ApiResponse<{
+    update(params: UpdateParams): Promise<ApiResponse<{
       updatedFields: string[];
       rowsUpdated: number;
       cellsUpdated: number;
     }>>;
 
-    // Alternative update method (legacy compatibility)
-    update(params: UpdateDataParams): Promise<ApiResponse<{
-      updatedRecord: Record<string, any>;
-      updatedFields: string[];
-      rowUpdated: number;
+    // Method to delete rows in the Google Sheet
+    delete(params: DeleteParams): Promise<ApiResponse<{
+      deletedRecord: Record<string, any>;
+      clearedRange: string;
+      rowDeleted: number;
     }>>;
-
-    // Method to deactivate a record
-    disactive(params: DisactiveParams): Promise<ApiResponse<Record<string, any>>>;
-
-    // Method to get the last ID in the sheet
-    getLastId(): Promise<ApiResponse<number>>;
-
-    // Method to get data by a specific key-value pair
-    getDataById(key: string, value: any): Promise<ApiResponse<Record<string, any>>>;
-
-    // Utility method to get column number
-    getNumCol(key: string, array: any[]): number;
   }
 
   export default GoogleSheet;

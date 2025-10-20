@@ -78,9 +78,10 @@ export const createErrorResponse = (
  * Maps Google API errors to standardized error responses
  * @param {Object} error - Google API error object
  * @param {string} operation - The operation that failed
+ * @param {Object} additionalContext - Additional context for error reporting
  * @returns {Object} Standardized error response
  */
-export const mapGoogleApiError = (error, operation = 'Operation') => {
+export const mapGoogleApiError = (error, operation = 'Operation', additionalContext = {}) => {
   let status, type, message;
 
   if (error?.result?.error) {
@@ -125,7 +126,8 @@ export const mapGoogleApiError = (error, operation = 'Operation') => {
 
   return createErrorResponse(message, status, type, {
     operation,
-    originalError: error
+    originalError: error,
+    ...additionalContext  // Include fileName, sheetName, sheetId, etc.
   });
 };
 
@@ -156,9 +158,10 @@ export const validateRequiredFields = (data, requiredFields) => {
  * Wraps async operations with error handling
  * @param {Function} operation - Async function to execute
  * @param {string} operationName - Name of the operation for error context
+ * @param {Object} additionalContext - Additional context for error reporting (optional)
  * @returns {Function} Wrapped function with error handling
  */
-export const withErrorHandling = (operation, operationName) => {
+export const withErrorHandling = (operation, operationName, additionalContext = {}) => {
   return async (...args) => {
     try {
       return await operation(...args);
@@ -166,14 +169,14 @@ export const withErrorHandling = (operation, operationName) => {
       console.error(`Error in ${operationName}:`, error);
       
       if (error.result?.error) {
-        return mapGoogleApiError(error, operationName);
+        return mapGoogleApiError(error, operationName, additionalContext);
       }
       
       return createErrorResponse(
         error.message || `Error in ${operationName}`,
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
         ERROR_TYPES.INTERNAL,
-        { operation: operationName, stack: error.stack }
+        { operation: operationName, stack: error.stack, ...additionalContext }
       );
     }
   };
